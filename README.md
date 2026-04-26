@@ -60,5 +60,23 @@ ACCESS_TOKEN_EXPIRE_MINUTES=43200
 OLLAMA_BASE_URL=http://host.docker.internal:11434
 ```
 
+## 🌍 Deployment
+
+### Frontend (Vercel)
+1. Push code to GitHub.
+2. Import repository in [Vercel](https://vercel.com).
+3. Set **Root Directory** to `frontend`.
+4. Add environment variables if needed.
+5. Deploy!
+
+### Backend (Render)
+1. Push code to GitHub.
+2. In [Render](https://render.com), click **New** > **Blueprint**.
+3. Connect this repository.
+4. Render will automatically spin up:
+   - **PostgreSQL Database**
+   - **FastAPI Backend** (via `backend/` directory)
+5. The `DATABASE_URL` will be automatically linked.
+
 ---
 *Built with ❤️ for Indian Farmers.*

@@ -1,15 +1,26 @@
+databases:
+  - name: agriai-db
+    databaseName: agriai
+    user: agriai_user
+    plan: free
+
 services:
   - type: web
     name: agriai-backend
     env: python
+    rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: agriai-db
+          property: connectionString
       - key: SECRET_KEY
-        sync: false
+        generateValue: true
       - key: ALGORITHM
         value: HS256
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: 43200
+      - key: CORS_ORIGINS
+        value: "*" # We can restrict this later once we have the Vercel URL
