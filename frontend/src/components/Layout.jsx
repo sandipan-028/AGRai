@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Sprout, ScanSearch, Mic, LogOut, Menu } from 'lucide-react';
+import { LayoutDashboard, Sprout, Scan, Mic, LogOut, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Layout = () => {
@@ -10,7 +10,7 @@ const Layout = () => {
   const menuItems = [
     { path: '/', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { path: '/crop-predictor', icon: <Sprout size={20} />, label: 'Crop Predictor' },
-    { path: '/disease-scanner', icon: <ScanSearch size={20} />, label: 'Disease Scanner' },
+    { path: '/disease-scanner', icon: <Scan size={20} />, label: 'Disease Scanner' },
     { path: '/voice-assistant', icon: <Mic size={20} />, label: 'Voice Assistant' },
   ];
 
