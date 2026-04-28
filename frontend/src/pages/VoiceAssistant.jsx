@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import GlassCard from '../components/GlassCard';
 import { Mic, MicOff, Send, Volume2, Globe, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-hot-toast';
 
 const VoiceAssistant = () => {
   const [isListening, setIsListening] = useState(false);
@@ -13,31 +14,95 @@ const VoiceAssistant = () => {
 
   const languages = ['English', 'Hindi', 'Kannada', 'Tamil'];
 
-  const handleMicClick = () => {
-    setIsListening(!isListening);
-    if (!isListening) {
-      setTimeout(() => {
-        setIsListening(false);
-        const voiceText = "What is the best fertilizer for wheat?";
-        handleSend(voiceText);
-      }, 3000);
-    }
+  const recognitionRef = useRef(null);
+
+  const langMap = {
+    'English': 'en-US',
+    'Hindi': 'hi-IN',
+    'Kannada': 'kn-IN',
+    'Tamil': 'ta-IN'
   };
 
-  const handleSend = (text) => {
+  const speak = (text, lang) => {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = langMap[lang] || 'en-US';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handleMicClick = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error('Speech recognition not supported in this browser.');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = langMap[selectedLang];
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      setIsListening(false);
+      toast.error('Voice recognition failed.');
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      handleSend(transcript);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+  };
+
+  const handleSend = async (text) => {
     const message = text || inputText;
     if (!message) return;
 
-    setMessages([...messages, { type: 'user', text: message }]);
+    setMessages(prev => [...prev, { type: 'user', text: message }]);
     setInputText('');
 
-    setTimeout(() => {
+    try {
+      const response = await fetch('http://localhost:8000/voice/process-text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: message,
+          target_lang: selectedLang
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch response');
+
+      const data = await response.json();
+      
       setMessages(prev => [...prev, {
         type: 'ai',
-        text: 'For wheat in West Bengal, organic compost combined with a small amount of NPK (120:60:40) is recommended. Ensure balanced irrigation during the crown root initiation stage.',
+        text: data.ai_response,
         lang: selectedLang
       }]);
-    }, 1500);
+      speak(data.ai_response, selectedLang);
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Failed to get response from AgriAI.');
+      setMessages(prev => [...prev, {
+        type: 'ai',
+        text: 'Sorry, I am having trouble connecting to the brain. Please try again.',
+        lang: 'English'
+      }]);
+    }
   };
 
   return (
@@ -92,7 +157,10 @@ const VoiceAssistant = () => {
                 }`}>
                   <p className="text-md leading-relaxed">{msg.text}</p>
                   {msg.type === 'ai' && (
-                    <button className="mt-4 px-4 py-2 bg-primary-600/20 hover:bg-primary-600/30 border border-primary-500/20 rounded-xl text-primary-300 flex items-center gap-3 text-xs font-black uppercase tracking-widest transition-all">
+                    <button 
+                      onClick={() => speak(msg.text, msg.lang)}
+                      className="mt-4 px-4 py-2 bg-primary-600/20 hover:bg-primary-600/30 border border-primary-500/20 rounded-xl text-primary-300 flex items-center gap-3 text-xs font-black uppercase tracking-widest transition-all"
+                    >
                       <Volume2 size={16} /> Listen in {selectedLang}
                     </button>
                   )}

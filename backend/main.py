@@ -28,7 +28,7 @@ app.add_middleware(
 async def startup_event():
     logger.info("Starting up AgriAI Backend...")
     # Initialize database tables if needed
-    # session.init_db()
+    session.init_db()
 
 @app.get("/")
 async def root():

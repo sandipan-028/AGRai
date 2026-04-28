@@ -4,6 +4,8 @@ import GlassCard from '../components/GlassCard';
 import { Mail, Lock, User, Phone, UserPlus, Sprout } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
+import api from '../services/api';
+
 const Register = () => {
   const [formData, setFormData] = useState({ 
     name: '', 
@@ -11,12 +13,21 @@ const Register = () => {
     phone: '',
     password: '' 
   });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    toast.success('Account created successfully!');
-    navigate('/login');
+    setLoading(true);
+    try {
+      await api.post('/auth/register', formData);
+      toast.success('Account created successfully!');
+      navigate('/login');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -100,8 +111,11 @@ const Register = () => {
             </div>
           </div>
 
-          <button type="submit" className="btn-luminous w-full flex items-center justify-center gap-3 py-4 text-lg mt-4">
-            <UserPlus size={22} /> Create Account
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="btn-luminous w-full flex items-center justify-center gap-3 py-4 text-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed">
+            <UserPlus size={22} /> {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 

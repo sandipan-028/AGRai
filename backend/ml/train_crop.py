@@ -10,20 +10,36 @@ import os
 os.makedirs("backend/ml", exist_ok=True)
 
 def train_crop_model():
-    # Synthetic dataset for Indian conditions
-    # N, P, K, temp, humidity, ph, rainfall, label
-    data = {
-        'N': np.random.randint(0, 100, 1000),
-        'P': np.random.randint(0, 100, 1000),
-        'K': np.random.randint(0, 100, 1000),
-        'temperature': np.random.uniform(15, 45, 1000),
-        'humidity': np.random.uniform(30, 90, 1000),
-        'ph': np.random.uniform(5, 8, 1000),
-        'rainfall': np.random.uniform(50, 300, 1000),
-        'label': np.random.choice(['rice', 'maize', 'chickpea', 'kidneybeans', 'pigeonpeas', 'mothbeans', 'mungbean', 'blackgram', 'lentil', 'pomegranate', 'banana', 'mango', 'grapes', 'watermelon', 'muskmelon', 'apple', 'orange', 'papaya', 'coconut', 'cotton', 'jute', 'coffee'], 1000)
-    }
+    # Real dataset for Indian conditions from user specified GitHub repository
+    zip_url = "https://raw.githubusercontent.com/sujitha963/Crop-And-Soil-Recommendation-System/main/archive.zip"
+    zip_path = "backend/ml/archive.zip"
+    csv_path = "backend/ml/Crop_recommendation.csv"
     
-    df = pd.DataFrame(data)
+    try:
+        if not os.path.exists(csv_path):
+            import urllib.request
+            import zipfile
+            print(f"Downloading dataset from {zip_url}...")
+            urllib.request.urlretrieve(zip_url, zip_path)
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall("backend/ml/")
+            os.remove(zip_path) # Clean up zip
+            
+        print(f"Loading data from {csv_path}...")
+        df = pd.read_csv(csv_path)
+    except Exception as e:
+        print(f"Error fetching data: {e}. Falling back to synthetic.")
+        data = {
+            'N': np.random.randint(0, 100, 1000),
+            'P': np.random.randint(0, 100, 1000),
+            'K': np.random.randint(0, 100, 1000),
+            'temperature': np.random.uniform(15, 45, 1000),
+            'humidity': np.random.uniform(30, 90, 1000),
+            'ph': np.random.uniform(5, 8, 1000),
+            'rainfall': np.random.uniform(50, 300, 1000),
+            'label': np.random.choice(['rice', 'maize', 'chickpea'], 1000)
+        }
+        df = pd.DataFrame(data)
     
     le = LabelEncoder()
     df['label'] = le.fit_transform(df['label'])

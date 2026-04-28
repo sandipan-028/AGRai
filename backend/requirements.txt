@@ -13,3 +13,8 @@ pandas
 python-dotenv
 aiohttp
 geoalchemy2
+deep-translator
+xgboost
+scikit-learn
+tensorflow
+pillow

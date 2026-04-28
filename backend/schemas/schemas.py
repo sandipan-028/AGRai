@@ -43,3 +43,16 @@ class FullAnalysisOutput(BaseModel):
     organic_solution: str
     care_plan: List[str]
     confidence: str
+
+class YieldPredictInput(BaseModel):
+    state: str
+    crop: str
+    season: str
+    area: float
+    annual_rainfall: float
+    fertilizer: float
+    pesticide: float
+
+class YieldPredictOutput(BaseModel):
+    predicted_yield: float
+    unit: str = "Tons per Hectare"

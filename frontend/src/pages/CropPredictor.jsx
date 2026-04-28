@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import GlassCard from '../components/GlassCard';
-import { Sprout, Search, Thermometer, Droplets, FlaskConical, CloudRain } from 'lucide-react';
+import { Sprout, Search, Thermometer, Droplets, FlaskConical, CloudRain, TrendingUp } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 const CropPredictor = () => {
   const [loading, setLoading] = useState(false);
@@ -188,8 +189,8 @@ const InputGroup = ({ label, name, value, onChange, icon }) => (
 );
 
 
-const TrendingUp = ({ className, size }) => (
-  <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-);
+// const TrendingUp = ({ className, size }) => (
+//   <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+// );
 
 export default CropPredictor;

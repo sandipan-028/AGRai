@@ -1,6 +1,6 @@
 import React from 'react';
 import GlassCard from '../components/GlassCard';
-import { CloudSun, Droplets, Thermometer, MapPin, TrendingUp, AlertTriangle } from 'lucide-react';
+import { CloudSun, Droplets, Thermometer, MapPin, TrendingUp, AlertTriangle, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Dashboard = () => {
@@ -106,6 +106,16 @@ const Dashboard = () => {
                <h2 className="text-xl font-bold text-white">Weather Insight</h2>
              </div>
              <p className="text-gray-400 text-sm leading-relaxed">Showers expected in next 48 hours. Postpone fertilizer application to avoid runoff.</p>
+          </GlassCard>
+
+          <GlassCard delay={0.7} className="bg-primary-500/[0.02] border-primary-500/20">
+             <div className="flex items-center gap-3 mb-4">
+               <div className="w-10 h-10 bg-primary-500/10 rounded-xl flex items-center justify-center">
+                 <Globe size={20} className="text-primary-400" />
+               </div>
+               <h2 className="text-xl font-bold text-white">Multilingual AI</h2>
+             </div>
+             <p className="text-gray-400 text-sm leading-relaxed">System optimized for 5 regional languages. Chat and Voice Assistant ready.</p>
           </GlassCard>
         </div>
       </div>

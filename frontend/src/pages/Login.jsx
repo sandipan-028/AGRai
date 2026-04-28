@@ -4,16 +4,26 @@ import GlassCard from '../components/GlassCard';
 import { Mail, Lock, LogIn, Sprout } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
+import api from '../services/api';
+
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate login
-    toast.success('Successfully logged in!');
-    localStorage.setItem('token', 'mock-token');
-    navigate('/');
+    setLoading(true);
+    try {
+      const response = await api.post('/auth/login', formData);
+      toast.success('Successfully logged in!');
+      localStorage.setItem('token', response.data.access_token);
+      navigate('/');
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Invalid credentials');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,8 +80,11 @@ const Login = () => {
             </div>
           </div>
 
-          <button type="submit" className="btn-luminous w-full flex items-center justify-center gap-3 py-4 text-lg">
-            <LogIn size={22} /> Login to Dashboard
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="btn-luminous w-full flex items-center justify-center gap-3 py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+            <LogIn size={22} /> {loading ? 'Logging in...' : 'Login to Dashboard'}
           </button>
         </form>
 

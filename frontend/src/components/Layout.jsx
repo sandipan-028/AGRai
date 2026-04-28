@@ -63,26 +63,27 @@ const Layout = () => {
                 }`
               }
             >
-              <div className="min-w-[24px] relative z-10">{item.icon}</div>
-              <AnimatePresence>
-                {isSidebarOpen && (
-                  <motion.span
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    className="whitespace-nowrap relative z-10 font-medium"
-                  >
-                    {item.label}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-              {/* Active Indicator Glow */}
-              <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  isActive ? "absolute inset-0 bg-primary-600/10 blur-sm rounded-xl" : "hidden"
-                }
-              />
+              {({ isActive }) => (
+                <>
+                  <div className="min-w-[24px] relative z-10">{item.icon}</div>
+                  <AnimatePresence>
+                    {isSidebarOpen && (
+                      <motion.span
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        className="whitespace-nowrap relative z-10 font-medium"
+                      >
+                        {item.label}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                  {/* Active Indicator Glow */}
+                  {isActive && (
+                    <div className="absolute inset-0 bg-primary-600/10 blur-sm rounded-xl" />
+                  )}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
